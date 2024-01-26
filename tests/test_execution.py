@@ -6,10 +6,10 @@ if True:
     if os.path.abspath(os.getcwd()) not in sys.path:
         sys.path.append(os.getcwd())
 
-from overall_xray_pipeline import SimpleSimulator, SimulatorMotorController, SimulatorXrayController
-from overall_xray_pipeline import SimulatorXraySetting, SimulatorFieldResolver, SimulatorAngleResolver
-from overall_xray_pipeline import SimulatorImageCache, SimulatorImagePreprocessor, SimulatorObjectReconstructor
-from overall_xray_pipeline import SimulatorReconstructionSettings, SimulatorXrayPipeline, SimulatorPipelineSettings
+from ctp import SimpleSimulator, SimulatorMotorController, SimulatorXrayController
+from ctp import SimulatorXraySetting, SimulatorFieldResolver, SimulatorAngleResolver
+from ctp import SimulatorImageCache, SimulatorImagePreprocessor, SimulatorObjectReconstructor
+from ctp import SimulatorReconstructionSettings, SimulatorCtPipeline, SimulatorPipelineSettings
 
 def data_generator_function(path="data/"):
     complete_data_paths = [os.path.join(path, data_path) 
@@ -39,7 +39,7 @@ def profiler(function):
         profiler.disable()
         stats = pstats.Stats(profiler).sort_stats('tottime')
         stats.print_stats()
-        stats.dump_stats("xray_cache/pipeline/profile.prof")
+        stats.dump_stats("ctp_cache/pipeline/profile.prof")
         return result
     return wrapper
 
@@ -50,12 +50,12 @@ def main():
     simulator_xray_controller = SimulatorXrayController(identification=simple_simulator)
     simulator_xray_setting = SimulatorXraySetting(power='on')
     simulator_field_resolver = SimulatorFieldResolver(xray_controller=simulator_xray_controller)
-    simulator_angle_resolver = SimulatorAngleResolver(delta_theta=1)
+    simulator_angle_resolver = SimulatorAngleResolver(delta_theta=10)
     simulator_image_cache = SimulatorImageCache()
     simulator_image_preprocessor = SimulatorImagePreprocessor()
     simulator_object_reconstructor = SimulatorObjectReconstructor()
     simulator_reconstruction_settings = SimulatorReconstructionSettings(original_shape=simple_simulator.object_shape)
-    simulator_xray_pipeline = SimulatorXrayPipeline(simulator=simple_simulator, 
+    simulator_xray_pipeline = SimulatorCtPipeline(simulator=simple_simulator, 
                                                     motor_controller=simulator_motor_controller, 
                                                     xray_controller=simulator_xray_controller, 
                                                     xray_setting=simulator_xray_setting,

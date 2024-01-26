@@ -1,4 +1,4 @@
-from .abstract_xray_pipeline import AbstractXrayPipeline, AbstractPipelineSettings
+from .abstract_xray_pipeline import AbstractCtPipeline, AbstractPipelineSettings
 from ..simulator import SimpleSimulator
 from ..motor_controller import SimulatorMotorController
 from ..xray_controller import SimulatorXrayController, SimulatorXraySetting
@@ -17,7 +17,7 @@ class SimulatorPipelineSettings(AbstractPipelineSettings):
         self.cache = True
         self.log = True
 
-class SimulatorXrayPipeline(AbstractXrayPipeline):
+class SimulatorCtPipeline(AbstractCtPipeline):
     def __init__(self, simulator: SimpleSimulator, motor_controller: SimulatorMotorController, 
                  xray_controller: SimulatorXrayController, xray_setting: SimulatorXraySetting,
                  field_resolver: SimulatorFieldResolver, angle_resolver: SimulatorAngleResolver, 
@@ -34,7 +34,7 @@ class SimulatorXrayPipeline(AbstractXrayPipeline):
         self.__image_preprocessor = image_preprocessor
         self.__object_reconstructor = object_reconstructor
         self.__reconstruction_settings = reconstruction_settings
-        self.__cache_dir = "xray_cache/pipeline/"
+        self.__cache_dir = "ctp_cache/pipeline/"
         os.makedirs(self.__cache_dir, exist_ok=True)
     
     def execute_pipeline(self, settings: SimulatorPipelineSettings) -> np.ndarray:

@@ -12,7 +12,7 @@ class SimpleSimulator(AbstractSimulator):
         self.log = log
         self.cache = cache
         self.__clear_cache = clear_cache
-        self.__cache_dir = "xray_cache/data/"
+        self.__cache_dir = "ctp_cache/data/"
         self.__data_generator_function = data_generator_function
         self.current_object_index = current_object_index
         self.current_angle = 0

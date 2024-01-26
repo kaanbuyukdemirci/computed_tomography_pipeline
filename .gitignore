@@ -1,5 +1,4 @@
-data/**
-pipeline_cache/**
+data
 !.gitkeep
 temp.py
-xray_cache
+ctp_cache

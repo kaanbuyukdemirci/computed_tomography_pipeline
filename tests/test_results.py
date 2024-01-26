@@ -32,8 +32,8 @@ def resize_ndarray(image, scale=1):
     return image
 
 def main():
-    treed_reconstruction = np.load("xray_cache/pipeline/reconstruction.npy")
-    original_object = np.load("xray_cache/pipeline/original_object.npy")
+    treed_reconstruction = np.load("ctp_cache/pipeline/reconstruction.npy")
+    original_object = np.load("ctp_cache/pipeline/original_object.npy")
     print(treed_reconstruction.max(), treed_reconstruction.min())
     print(original_object.max(), original_object.min())
     print(treed_reconstruction.shape, original_object.shape)

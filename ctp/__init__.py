@@ -6,4 +6,4 @@ from .angle_resolver import SimulatorAngleResolver
 from .image_cache import SimulatorImageCache
 from .image_preprocessor import SimulatorImagePreprocessor
 from .object_reconstructor import SimulatorObjectReconstructor, SimulatorReconstructionSettings
-from .xray_pipeline import SimulatorXrayPipeline, SimulatorPipelineSettings
+from .ct_pipeline import SimulatorCtPipeline, SimulatorPipelineSettings

@@ -13,7 +13,7 @@ import numpy as np
 class AbstractPipelineSettings(ABC):
     pass
 
-class AbstractXrayPipeline(ABC):
+class AbstractCtPipeline(ABC):
     def __init__(self, simulator: AbstractSimulator, motor_controller: AbstractMotorController, 
                  xray_controller: AbstractXrayController, field_resolver: AbstractFieldResolver, 
                  angle_resolver: AbstractAngleResolver, image_cache: AbstractImageCache, 
