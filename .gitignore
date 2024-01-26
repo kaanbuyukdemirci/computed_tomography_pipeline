@@ -2,3 +2,4 @@ data/**
 pipeline_cache/**
 !.gitkeep
 temp.py
+xray_cache
