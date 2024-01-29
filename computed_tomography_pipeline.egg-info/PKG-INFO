@@ -1,5 +1,5 @@
 Metadata-Version: 2.1
-Name: ctp
+Name: computed_tomography_pipeline
 Version: 1.0.0.dev1
 Summary: A package for x-ray and ct image processing
 Author-email: Kaan Buyukdemirci <kaanbuyukdemirci2023@gmail.com>

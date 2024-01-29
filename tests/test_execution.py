@@ -6,10 +6,10 @@ if True:
     if os.path.abspath(os.getcwd()) not in sys.path:
         sys.path.append(os.getcwd())
 
-from ctp import SimpleSimulator, SimulatorMotorController, SimulatorXrayController
-from ctp import SimulatorXraySetting, SimulatorFieldResolver, SimulatorAngleResolver
-from ctp import SimulatorImageCache, SimulatorImagePreprocessor, SimulatorObjectReconstructor
-from ctp import SimulatorReconstructionSettings, SimulatorCtPipeline, SimulatorPipelineSettings
+from computed_tomography_pipeline import SimpleSimulator, SimulatorMotorController, SimulatorXrayController
+from computed_tomography_pipeline import SimulatorXraySetting, SimulatorFieldResolver, SimulatorAngleResolver
+from computed_tomography_pipeline import SimulatorImageCache, SimulatorImagePreprocessor, SimulatorObjectReconstructor
+from computed_tomography_pipeline import SimulatorReconstructionSettings, SimulatorCtPipeline, SimulatorPipelineSettings
 
 def data_generator_function(path="data/"):
     complete_data_paths = [os.path.join(path, data_path) 
