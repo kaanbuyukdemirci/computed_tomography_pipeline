@@ -22,6 +22,9 @@ classifiers = [
 ]
 dependencies = ["matplotlib","numpy","opencv-python","scikit-image","scipy","tqdm","pydicom","torch","torchvision"]
 
+[tool.setuptools]
+packages = ["ctp"]
+
 [project.urls]
 Homepage = "https://github.com/kaanbuyukdemirci/xray_pipeline"
 Issues = "https://github.com/kaanbuyukdemirci/xray_pipeline/issues"

@@ -1,0 +1,51 @@
+Metadata-Version: 2.1
+Name: ctp
+Version: 1.0.0.dev1
+Summary: A package for x-ray and ct image processing
+Author-email: Kaan Buyukdemirci <kaanbuyukdemirci2023@gmail.com>
+Maintainer-email: Kaan Buyukdemirci <kaanbuyukdemirci2023@gmail.com>
+License: Copyright (c) 2024 Kaan Buyukdemirci
+        
+        Permission is hereby granted, free of charge, to any person obtaining
+        a copy of this software and associated documentation files (the
+        "Software"), to deal in the Software without restriction, including
+        without limitation the rights to use, copy, modify, merge, publish,
+        distribute, sublicense, and/or sell copies of the Software, and to
+        permit persons to whom the Software is furnished to do so, subject to
+        the following conditions:
+        
+        The above copyright notice and this permission notice shall be
+        included in all copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+        LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+        OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+        WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+        
+Project-URL: Homepage, https://github.com/kaanbuyukdemirci/xray_pipeline
+Project-URL: Issues, https://github.com/kaanbuyukdemirci/xray_pipeline/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: matplotlib
+Requires-Dist: numpy
+Requires-Dist: opencv-python
+Requires-Dist: scikit-image
+Requires-Dist: scipy
+Requires-Dist: tqdm
+Requires-Dist: pydicom
+Requires-Dist: torch
+Requires-Dist: torchvision
+
+# Info
+This repository is the implementation of the given flowchart (red blocks are marked for other purposes, it doesn't indicate any error or missing part):
+![Flowchart](CT&#32;Scan&#32;Workflow.png "CT Scan Workflow")
+
+The repository is not yet complete. All the parts in the flowchart are implemented, but this library as it is now is not that useful. I will add new features for machine learning, control of real motors, and control of real xray emitters.
+I used a sample from the dataset "SPHNQA4IQI" on [here](https://www.cancerimagingarchive.net/nbia-search/?CollectionCriteria=LIDC-IDRI).
