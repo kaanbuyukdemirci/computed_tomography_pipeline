@@ -6,18 +6,15 @@ from typing import Literal
 
 class SimulatorXraySetting(AbstractXraySetting):
     def __init__(self, power:Literal['on', 'off']) -> None:
-        self.__power= power
-    
-    @property
-    def power(self) -> Literal['on', 'off']:
-        return self.__power
-    @power.setter
-    def power(self, power:Literal['on', 'off']) -> None:
-        self.__power = power
+        self.power = power
 
 class SimulatorXrayController(AbstractXrayController):
     def __init__(self, identification:SimpleSimulator) -> None:
         self.__identification = identification
+    
+    @property
+    def identification(self) -> SimpleSimulator:
+        return self.__identification
     
     def get_image(self, xray_setting:SimulatorXraySetting) -> np.ndarray:
         if xray_setting.power == 'on':

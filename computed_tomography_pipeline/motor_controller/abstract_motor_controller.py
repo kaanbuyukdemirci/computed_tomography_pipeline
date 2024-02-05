@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 class AbstractMotorController(ABC):
-    def __init__(self, identification) -> None:
-        self.__identification = identification
+    __identification:Any
     
     @abstractmethod
     def rotate_motor(self, angle: float) -> None:

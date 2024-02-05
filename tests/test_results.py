@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import cv2
 from torchvision.transforms.functional import resize
 from skimage.metrics import structural_similarity as ssim
+import h5py
 
 class Metrics(object):
     def __init__(self) -> None:
@@ -32,15 +33,18 @@ def resize_ndarray(image, scale=1):
     return image
 
 def main():
-    treed_reconstruction = np.load("ctp_cache/pipeline/reconstruction.npy")
-    original_object = np.load("ctp_cache/pipeline/original_object.npy")
-    print(treed_reconstruction.max(), treed_reconstruction.min())
+    # load from big_data_dictionary.hdf5
+    sample_index = 1
+    with h5py.File("big_data_dictionary.hdf5", 'r') as f:
+        object_reconstruction = f["reconstructed_object"][sample_index]
+        original_object = f["original_object"][sample_index]
+    print(object_reconstruction.max(), object_reconstruction.min())
     print(original_object.max(), original_object.min())
-    print(treed_reconstruction.shape, original_object.shape)
+    print(object_reconstruction.shape, original_object.shape)
     metric_data = {"mse": [], "psnr": [], "ssim": []}
-    for i in range(treed_reconstruction.shape[0]):
+    for i in range(object_reconstruction.shape[0]):
         # images
-        reconstructed_image = treed_reconstruction[i]
+        reconstructed_image = object_reconstruction[i]
         original_image = original_object[i]
         
         # metrics 

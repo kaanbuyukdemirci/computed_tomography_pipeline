@@ -9,3 +9,4 @@ computed_tomography_pipeline.egg-info/requires.txt
 computed_tomography_pipeline.egg-info/top_level.txt
 tests/test_execution.py
 tests/test_results.py
+tests/test_simulator.py

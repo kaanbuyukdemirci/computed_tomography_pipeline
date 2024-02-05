@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from typing import Callable
 
 class AbstractImagePreprocessor(ABC):
-    def __init__(self, preprocessor_function) -> None:
-        self.__preprocessor_function = preprocessor_function
+    __preprocessor_function: Callable[[np.ndarray], np.ndarray]
 
     @abstractmethod
     def preprocess_image(self, image) -> np.ndarray:

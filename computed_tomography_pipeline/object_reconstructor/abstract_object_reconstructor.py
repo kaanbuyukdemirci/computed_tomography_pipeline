@@ -9,5 +9,5 @@ class AbstractObjectReconstructor(ABC):
         self.__settings = settings
     
     @abstractmethod
-    def reconstruct_object(self, data: np.ndarray) -> np.ndarray:
+    def reconstruct_object(self, data: np.ndarray, reconstruction_settings: AbstractReconstructionSettings) -> np.ndarray:
         pass

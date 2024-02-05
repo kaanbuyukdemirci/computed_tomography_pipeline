@@ -11,16 +11,17 @@ authors = [
 maintainers = [
   {name = "Kaan Buyukdemirci", email = "kaanbuyukdemirci2023@gmail.com"}
 ]
-description = "A package for x-ray and ct image processing"
+description = "A package for computed tomography image processing"
 readme = "README.md"
 license = {file = "LICENSE"}
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = ["matplotlib","numpy","opencv-python","scikit-image","scipy","tqdm","pydicom","torch","torchvision"]
+dependencies = ["matplotlib","numpy","opencv-python","scikit-image","scipy","tqdm","pydicom","torch","torchvision",
+"h5py", "skimage", "pydicom"]
 
 [tool.setuptools]
 packages = ["computed_tomography_pipeline"]

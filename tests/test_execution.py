@@ -11,7 +11,7 @@ from computed_tomography_pipeline import SimulatorXraySetting, SimulatorFieldRes
 from computed_tomography_pipeline import SimulatorImageCache, SimulatorImagePreprocessor, SimulatorObjectReconstructor
 from computed_tomography_pipeline import SimulatorReconstructionSettings, SimulatorCtPipeline, SimulatorPipelineSettings
 
-def data_generator_function(path="data/"):
+def data_generator_function_1(path="data/"):
     complete_data_paths = [os.path.join(path, data_path) 
                         for data_path in os.listdir(path) 
                         if data_path.endswith(".dcm")]
@@ -29,7 +29,19 @@ def data_generator_function(path="data/"):
     for i, path in enumerate(complete_data_paths):
         data[i] = (dicom.dcmread(path).pixel_array - pixel_range[0]) / (pixel_range[1] - pixel_range[0])
     
-    yield data
+    return data
+
+def data_generator_function_2(path="data/SPHNQA4IQI/"):
+    for path_i in os.listdir(path):
+        path_i = path + path_i
+        for path_j in os.listdir(path_i):
+            path_j = path_i + "/" + path_j
+            if len(os.listdir(path_j)) == 1:
+                break
+            else:
+                print("sample: ", path_j)
+                yield data_generator_function_1(path_j)
+    yield None
 
 def profiler(function):
     def wrapper(*args, **kwargs):
@@ -44,18 +56,23 @@ def profiler(function):
     return wrapper
 
 def main():
-    data_generator = data_generator_function()
-    simple_simulator = SimpleSimulator(data_generator_function=data_generator, clear_cache=True)
+    data_generator = data_generator_function_2()
+    simple_simulator = SimpleSimulator(object_generator_function=data_generator)
     simulator_motor_controller = SimulatorMotorController(identification=simple_simulator)
     simulator_xray_controller = SimulatorXrayController(identification=simple_simulator)
     simulator_xray_setting = SimulatorXraySetting(power='on')
     simulator_field_resolver = SimulatorFieldResolver(xray_controller=simulator_xray_controller)
-    simulator_angle_resolver = SimulatorAngleResolver(delta_theta=10)
-    simulator_image_cache = SimulatorImageCache()
+    simulator_angle_resolver = SimulatorAngleResolver(number_of_angles=3)
+    simulator_image_cache = SimulatorImageCache(simulator_xray_controller, 
+                                                simulator_field_resolver,
+                                                simulator_angle_resolver, 
+                                                big_data_dictionary_path="big_data_dictionary.hdf5",
+                                                number_of_objects=2,
+                                                from_saved=False)
+    #print(simulator_image_cache.shapes)
     simulator_image_preprocessor = SimulatorImagePreprocessor()
     simulator_object_reconstructor = SimulatorObjectReconstructor()
-    simulator_reconstruction_settings = SimulatorReconstructionSettings(original_shape=simple_simulator.object_shape)
-    simulator_xray_pipeline = SimulatorCtPipeline(simulator=simple_simulator, 
+    simulator_ct_pipeline = SimulatorCtPipeline(simulator=simple_simulator, 
                                                     motor_controller=simulator_motor_controller, 
                                                     xray_controller=simulator_xray_controller, 
                                                     xray_setting=simulator_xray_setting,
@@ -63,11 +80,9 @@ def main():
                                                     angle_resolver=simulator_angle_resolver, 
                                                     image_cache=simulator_image_cache, 
                                                     image_preprocessor=simulator_image_preprocessor, 
-                                                    object_reconstructor=simulator_object_reconstructor, 
-                                                    reconstruction_settings=simulator_reconstruction_settings
-                                                    )
-    simulator_pipeline_settings = SimulatorPipelineSettings()
-    simulator_xray_pipeline.execute_pipeline(settings=simulator_pipeline_settings)
+                                                    object_reconstructor=simulator_object_reconstructor)
+    simulator_pipeline_settings = SimulatorPipelineSettings(start_from='beginning')
+    simulator_ct_pipeline.execute_pipeline(pipeline_settings=simulator_pipeline_settings)
 
 if __name__ == "__main__":
     main()

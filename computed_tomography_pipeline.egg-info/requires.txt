@@ -7,3 +7,6 @@ tqdm
 pydicom
 torch
 torchvision
+h5py
+skimage
+pydicom

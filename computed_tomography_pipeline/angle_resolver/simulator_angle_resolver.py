@@ -1,11 +1,16 @@
 from .abstract_angle_resolver import AbstractAngleResolver
+from typing import Optional
 
 class SimulatorAngleResolver(AbstractAngleResolver):
-    def __init__(self, delta_theta: float) -> None:
-        self.__delta_theta = delta_theta
+    def __init__(self, number_of_angles: int) -> None:
+        self.__number_of_angles = number_of_angles
         self.__angle_history = list()
         self.__current_angle = None
+        self.__angle_change = 180 / (self.__number_of_angles)
     
+    @property
+    def number_of_angles(self) -> int:
+        return self.__number_of_angles
     @property
     def angle_history(self) -> list[float]:
         return self.__angle_history
@@ -15,15 +20,14 @@ class SimulatorAngleResolver(AbstractAngleResolver):
         return self.__current_angle
     @current_angle.setter
     def current_angle(self, value):
+        self.__angle_history.append(self.__current_angle)
         self.__current_angle = value
-        self.__angle_history.append(value)
     
-    def is_valid_angle_change(self) -> bool:
-        return self.current_angle < 180
-    
-    def resolve_angle(self, information=None) -> tuple[bool, float]:
+    def resolve_angle(self, information=None) -> Optional[float]:
         if self.current_angle is None:
-            self.current_angle = 0
+            self.__current_angle = 0
         else:
-            self.current_angle = self.current_angle + self.__delta_theta
-        return (self.is_valid_angle_change(), self.current_angle)
+            self.current_angle = self.current_angle + self.__angle_change
+            if self.current_angle >= 180:
+                return None
+        return self.current_angle

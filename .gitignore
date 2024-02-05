@@ -1,4 +1,11 @@
 data
-!.gitkeep
+help.txt
+
 temp.py
-ctp_cache
+big_data_dictionary.hdf5
+
+# any pycache in any directory
+**/__pycache__/
+
+
+!.gitkeep

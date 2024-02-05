@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from typing import Any
 
 class AbstractXraySetting(ABC):
     pass
 
 class AbstractXrayController(ABC):
-    def __init__(self, identification) -> None:
-        super().__init__()
-        self.__identification = identification
+    __identification: Any
     
     @abstractmethod
     def get_image(self, xray_setting:AbstractXraySetting) -> np.ndarray:

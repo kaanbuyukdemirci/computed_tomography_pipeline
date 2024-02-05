@@ -1,2 +1,2 @@
-from .abstract_xray_pipeline import AbstractCtPipeline, AbstractPipelineSettings
-from .simulator_xray_pipeline import SimulatorCtPipeline, SimulatorPipelineSettings
+from .abstract_ct_pipeline import AbstractCtPipeline, AbstractPipelineSettings
+from .simulator_ct_pipeline import SimulatorCtPipeline, SimulatorPipelineSettings

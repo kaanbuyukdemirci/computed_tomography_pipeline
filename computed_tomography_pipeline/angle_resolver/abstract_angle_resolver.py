@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
+from typing import Any, Optional
 
 class AbstractAngleResolver(ABC):
-    def __init__(self) -> None:
-        self.__angle_history = list()
-        self.__current_angle = None
+    __angle_history: list[float] = list()
+    __current_angle: Optional[float] = None
+    __number_of_angles: Optional[int] = None
     
     @property
     @abstractmethod
@@ -20,5 +21,5 @@ class AbstractAngleResolver(ABC):
     def current_angle(self, value):
         pass
     
-    def resolve_angle(self, information) -> tuple[bool, float]:
+    def resolve_angle(self, information: Any=None) -> Optional[float]:
         pass
