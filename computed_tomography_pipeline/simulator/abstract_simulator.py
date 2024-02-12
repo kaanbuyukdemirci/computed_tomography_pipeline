@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from typing import Callable
+from typing import Iterable
 
 class AbstractSimulator(ABC):
-    object_generator_function:Callable
+    iterable_generator_class: Iterable
     
     @property
     @abstractmethod

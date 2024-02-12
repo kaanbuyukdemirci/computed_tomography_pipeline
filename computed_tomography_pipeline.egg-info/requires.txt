@@ -8,5 +8,5 @@ pydicom
 torch
 torchvision
 h5py
-skimage
+scikit-image
 pydicom

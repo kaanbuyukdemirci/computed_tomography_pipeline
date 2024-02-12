@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "computed_tomography_pipeline"
-version = "1.0.0.dev1"
+version = "2.0.0.dev1"
 authors = [
   { name="Kaan Buyukdemirci", email="kaanbuyukdemirci2023@gmail.com" },
 ]
@@ -21,7 +21,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = ["matplotlib","numpy","opencv-python","scikit-image","scipy","tqdm","pydicom","torch","torchvision",
-"h5py", "skimage", "pydicom"]
+"h5py", "scikit-image", "pydicom"]
 
 [tool.setuptools]
 packages = ["computed_tomography_pipeline"]

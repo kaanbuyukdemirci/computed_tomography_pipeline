@@ -32,11 +32,12 @@ def resize_ndarray(image, scale=1):
     image = image.numpy()
     return image
 
-def main():
+def main(angle_resolver_index=0):
     # load from big_data_dictionary.hdf5
-    sample_index = 1
+    sample_index = 0
+    angle_resolver_index = angle_resolver_index
     with h5py.File("big_data_dictionary.hdf5", 'r') as f:
-        object_reconstruction = f["reconstructed_object"][sample_index]
+        object_reconstruction = f["reconstructed_object"][sample_index, angle_resolver_index, 0, 0]
         original_object = f["original_object"][sample_index]
     print(object_reconstruction.max(), object_reconstruction.min())
     print(original_object.max(), original_object.min())
@@ -84,6 +85,34 @@ def main():
     plt.plot(metric_data["ssim"], label=f"SSIM ({np.mean(metric_data['ssim']):.4f})")
     plt.legend()
     plt.show()
-    
+
+def draw():
+    # load from big_data_dictionary.hdf5
+    sample_index = 0
+    angle_resolver_index = 0
+    with h5py.File("big_data_dictionary.hdf5", 'r') as f:
+        dataset = f["projection_images"]
+        print(dataset.shape)
+        angle_resolver_0s = dataset[sample_index, 0]
+        angle_resolver_1s = dataset[sample_index, 1]
+    for i in range(angle_resolver_0s.shape[0]):
+        # images
+        angle_resolver_0 = angle_resolver_0s[i]
+        angle_resolver_1 = angle_resolver_1s[i]
+
+        # concatenate
+        image = np.concatenate((angle_resolver_0, angle_resolver_1), axis=1)
+        
+        # put text
+        text = str(i)
+        cv2.putText(image, text, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        
+        # show
+        cv2.imshow("image", image)
+        pressed_key = cv2.waitKey(100)
+        if pressed_key == ord('q'): break
+
 if __name__ == '__main__':
-    main()
+    main(1)
+    #main()
+    #draw()

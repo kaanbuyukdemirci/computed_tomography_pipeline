@@ -31,3 +31,8 @@ class SimulatorAngleResolver(AbstractAngleResolver):
             if self.current_angle >= 180:
                 return None
         return self.current_angle
+
+    def reset(self) -> None:
+        self.__current_angle = None
+        self.__angle_history = list()
+        return None

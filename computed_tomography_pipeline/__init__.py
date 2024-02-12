@@ -1,4 +1,4 @@
-from .simulator import SimpleSimulator
+from .simulator import SimpleSimulator, SimpleDataset
 from .motor_controller import SimulatorMotorController
 from .xray_controller import SimulatorXrayController, SimulatorXraySetting
 from .field_resolver import SimulatorFieldResolver

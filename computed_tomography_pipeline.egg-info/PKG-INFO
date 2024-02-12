@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: computed_tomography_pipeline
-Version: 1.0.0.dev1
+Version: 2.0.0.dev1
 Summary: A package for computed tomography image processing
 Author-email: Kaan Buyukdemirci <kaanbuyukdemirci2023@gmail.com>
 Maintainer-email: Kaan Buyukdemirci <kaanbuyukdemirci2023@gmail.com>
@@ -43,7 +43,7 @@ Requires-Dist: pydicom
 Requires-Dist: torch
 Requires-Dist: torchvision
 Requires-Dist: h5py
-Requires-Dist: skimage
+Requires-Dist: scikit-image
 Requires-Dist: pydicom
 
 # Info

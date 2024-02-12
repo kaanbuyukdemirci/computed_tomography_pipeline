@@ -1,8 +1,9 @@
 data
 help.txt
+TODO
 
-temp.py
-big_data_dictionary.hdf5
+temp*
+big_data_dictionary*
 
 # any pycache in any directory
 **/__pycache__/

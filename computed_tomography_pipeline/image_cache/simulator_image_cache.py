@@ -7,12 +7,28 @@ from ..angle_resolver import SimulatorAngleResolver
 import numpy as np
 import h5py
 import copy
+from typing import Optional
 
 class MemoryManager(object):
     def __init__(self, memory_shape:np.ndarray) -> None:
         self.__memory_shape = memory_shape
         self.__occupancy_pointer = np.zeros_like(memory_shape)
         self.__is_memory_full = False
+    
+    @property
+    def occupancy_pointer(self) -> np.ndarray:
+        return self.__occupancy_pointer
+    @property
+    def is_memory_full(self) -> bool:
+        return self.__is_memory_full
+    @property
+    def memory_shape(self) -> np.ndarray:
+        return self.__memory_shape
+
+    def set_occupancy_pointer(self, occupancy_pointer:np.ndarray) -> None:
+        # 0 - adjust the occupancy_pointer shape
+        occupancy_pointer = [occupancy_pointer[i] if i < len(occupancy_pointer) else 0 for i in range(len(self.__memory_shape))]
+        self.__occupancy_pointer = np.array(occupancy_pointer)
 
     def __call__(self, data_shape:np.ndarray) -> np.ndarray:
         if self.__is_memory_full:
@@ -30,6 +46,7 @@ class MemoryManager(object):
         if not(all([True if self.__occupancy_pointer[-i] == 0 else False for i in range(1, len(data_shape))]) \
             or len(data_shape) == 1):
                 raise ValueError("Wrong shape.")
+        #if len(data_shape) <= len(self.__occupancy_pointer):
         if data_shape[0] > (self.__memory_shape[-len(data_shape)] - self.__occupancy_pointer[-len(data_shape)]):
             raise ValueError("Wrong shape.")
         
@@ -51,33 +68,68 @@ class MemoryManager(object):
         slices = [slice(start_pointer[i], end_pointer[i], 1) if i == len(start_pointer)-1 else start_pointer[i]
                   for i in range(len(start_pointer))]
         return slices
+
+    def __str__(self) -> str:
+        return f"Memory Manager: memory_shape: {self.__memory_shape}, occupancy_pointer: {self.__occupancy_pointer}, is_memory_full: {self.__is_memory_full}"
+
 class SimulatorImageCache(AbstractImageCache):
-    def __init__(self, xray_controller:SimulatorXrayController, field_resolver:SimulatorFieldResolver,
-                 angle_resolver:SimulatorAngleResolver, big_data_dictionary_path:str, number_of_objects: int=1, 
-                 from_saved:bool=False) -> None:
-        self.__xray_controller = xray_controller
-        self.__field_resolver = field_resolver
-        self.__angle_resolver = angle_resolver
+    def __init__(self, xray_controller:Optional[SimulatorXrayController], 
+                 field_resolver:Optional[SimulatorFieldResolver],
+                 angle_resolver:Optional[SimulatorAngleResolver], 
+                 big_data_dictionary_path:str, number_of_objects: int=1, 
+                 number_of_angle_resolvers: int=1, number_of_pre_processors: int=1,
+                 number_of_reconstructors: int=1, from_saved:bool=False) -> None:
+        self.__number_of_objects_index = 0
+        self.__number_of_angle_resolvers_index = 1
+        self.__number_of_pre_processors_index = 2
+        self.__number_of_reconstructors_index = 3
+        if not from_saved:
+            self.__xray_controller = xray_controller
+            self.__field_resolver = field_resolver
+            self.__angle_resolver = angle_resolver
         self.__big_data_dictionary_path = big_data_dictionary_path
         self.__from_saved = from_saved
         self.__number_of_objects = number_of_objects
-        number_of_angles = self.__angle_resolver.number_of_angles
-        self.__shapes = {"original_object": (self.__number_of_objects, *self.__xray_controller.identification.object_shape),
-                         "flat_field_images": self.__field_resolver.flat_field_shape,
-                         "dark_field_images": self.__field_resolver.dark_field_shape,
-                         "projection_images": (self.__number_of_objects, number_of_angles, *self.__xray_controller.identification.xray_projection_shape),
-                         "angles": (number_of_angles,),
-                         "pre_processed_projection_images": (self.__number_of_objects, number_of_angles, *self.__xray_controller.identification.xray_projection_shape),
-                         "reconstructed_object": (self.__number_of_objects, *self.__xray_controller.identification.object_shape)}
-        self.__cache_pointers = {"original_object": MemoryManager(self.__shapes["original_object"]),
-                           "flat_field_images": MemoryManager(self.__shapes["flat_field_images"]),
-                           "dark_field_images": MemoryManager(self.__shapes["dark_field_images"]),
-                           "projection_images": MemoryManager(self.__shapes["projection_images"]),
-                           "angles": MemoryManager(self.__shapes["angles"]),
-                           "pre_processed_projection_images": MemoryManager(self.__shapes["pre_processed_projection_images"]),
-                           "reconstructed_object": MemoryManager(self.__shapes["reconstructed_object"])}
-        self.__retrieval_pointers = copy.deepcopy(self.__cache_pointers)
-        if not from_saved:
+        self.__number_of_angle_resolvers = number_of_angle_resolvers
+        self.__number_of_pre_processors = number_of_pre_processors
+        self.__number_of_reconstructors = number_of_reconstructors
+        if self.__from_saved:
+            # read
+            with h5py.File(self.__big_data_dictionary_path, 'r') as f:
+                self.__shapes = {"original_object": f['original_object'].shape,
+                                 "flat_field_images": f['flat_field_images'].shape,
+                                 "dark_field_images": f['dark_field_images'].shape,
+                                 "angles": f['angles'].shape,
+                                 "projection_images": f['projection_images'].shape,
+                                 "pre_processed_projection_images": f['pre_processed_projection_images'].shape,
+                                 "reconstructed_object": f['reconstructed_object'].shape,
+                                 "original_object": f['original_object'].shape,
+                                 "original_object": f['original_object'].shape,
+                                 "original_object": f['original_object'].shape,
+                                 "original_object": f['original_object'].shape,
+                                 }
+        else:
+            number_of_angles = [i.number_of_angles for i in self.__angle_resolver]
+            if all([i==number_of_angles[0] for i in number_of_angles]):
+                number_of_angles = number_of_angles[0]
+            else:
+                raise ValueError("Number of angles must be the same for all angle resolvers.")
+            self.__shapes = {"original_object": (self.__number_of_objects, *self.__xray_controller.identification.object_shape),
+                            "flat_field_images": (self.__number_of_objects, *self.__field_resolver.flat_field_shape),
+                            "dark_field_images": (self.__number_of_objects, *self.__field_resolver.dark_field_shape),
+                            "angles": (self.__number_of_objects, self.__number_of_angle_resolvers, number_of_angles,),
+                            "projection_images": (self.__number_of_objects, self.__number_of_angle_resolvers, number_of_angles, *self.__xray_controller.identification.xray_projection_shape),
+                            "pre_processed_projection_images": (self.__number_of_objects, self.__number_of_angle_resolvers, self.__number_of_pre_processors, number_of_angles, *self.__xray_controller.identification.xray_projection_shape),
+                            "reconstructed_object": (self.__number_of_objects, self.__number_of_angle_resolvers, self.__number_of_pre_processors, self.__number_of_reconstructors, *self.__xray_controller.identification.object_shape)}
+        self.cache_pointers = {"original_object": MemoryManager(self.__shapes["original_object"]),
+                        "flat_field_images": MemoryManager(self.__shapes["flat_field_images"]),
+                        "dark_field_images": MemoryManager(self.__shapes["dark_field_images"]),
+                        "projection_images": MemoryManager(self.__shapes["projection_images"]),
+                        "angles": MemoryManager(self.__shapes["angles"]),
+                        "pre_processed_projection_images": MemoryManager(self.__shapes["pre_processed_projection_images"]),
+                        "reconstructed_object": MemoryManager(self.__shapes["reconstructed_object"])}
+        self.retrieval_pointers = copy.deepcopy(self.cache_pointers)
+        if not self.__from_saved:
             self._AbstractImageCache__initialize_big_data_dictionary()
     
     def _AbstractImageCache__initialize_big_data_dictionary(self) -> None:
@@ -101,16 +153,117 @@ class SimulatorImageCache(AbstractImageCache):
     @property
     def number_of_objects(self) -> int:
         return self.__number_of_objects
-    
+
     def cache_data(self, name: str, data: np.ndarray) -> None:
         with h5py.File(self.__big_data_dictionary_path, 'r+') as f:
             dataset = f[name]
-            slc = self.__cache_pointers[name](data.shape)
+            slc = self.cache_pointers[name](data.shape)
+            #print("cache", name, self.cache_pointers[name], slc, data.shape)
             dataset[*slc] = data
-    
     def retrieve_data(self, name: str, shape: np.ndarray) -> np.ndarray:
         with h5py.File(self.__big_data_dictionary_path, 'r') as f:
             dataset = f[name]
-            slc = self.__retrieval_pointers[name](shape)
+            slc = self.retrieval_pointers[name](shape)
+            #print("retrieve", name, self.retrieval_pointers[name], slc)
             data = dataset[*slc]
         return data
+
+    def set_all_occupancy_pointers(self, occupancy_pointer: np.ndarray) -> None:
+        for i in self.cache_pointers.keys():
+            occupancy_pointer_size = self.cache_pointers[i].occupancy_pointer.size
+            new_occupancy_pointer = [occupancy_pointer[j] if j < len(occupancy_pointer) else 0 for j in range(occupancy_pointer_size)]
+            self.cache_pointers[i].set_occupancy_pointer(new_occupancy_pointer)
+            self.retrieval_pointers[i].set_occupancy_pointer(new_occupancy_pointer)
+    def reset_all_occupancy_pointers(self) -> None:
+        self.set_all_occupancy_pointers(np.array([]))
+    def expand_memory(self, name: str, shape: np.ndarray) -> None:
+        # create new dataset
+        with h5py.File(self.__big_data_dictionary_path, 'r+') as f:
+            f.create_dataset(name+"_new", shape=shape, dtype=np.float32)
+        # copy data
+        with h5py.File(self.__big_data_dictionary_path, 'r+') as f:
+            dataset = f[name]
+            new_dataset = f[name+"_new"]
+            slices = [0 if i < len(shape)-len(dataset.shape) else slice(0, dataset.shape[i], 1) for i in range(len(shape))]
+            new_dataset[*slices] = dataset
+            # delete old dataset
+            del f[name]
+            # rename new dataset
+            f.move(name+"_new", name)
+        # update shapes
+        self.__shapes[name] = shape
+        self.cache_pointers[name] = MemoryManager(self.__shapes[name])
+        self.retrieval_pointers[name] = MemoryManager(self.__shapes[name])
+        # set pointer to the start of the expanded memory
+        self.set_all_occupancy_pointers
+
+    def set_pointers_for_ith_angle_resolver(self, i: int) -> None:
+        keys = ["angles", "projection_images", "pre_processed_projection_images", "reconstructed_object"]
+        for key in keys:
+            cache_pointer = self.cache_pointers[key].occupancy_pointer
+            cache_pointer[self.__number_of_angle_resolvers_index] = i
+            retrieval_pointer = self.retrieval_pointers[key].occupancy_pointer
+            retrieval_pointer[self.__number_of_angle_resolvers_index] = i
+            self.cache_pointers[key].set_occupancy_pointer(cache_pointer)
+            self.retrieval_pointers[key].set_occupancy_pointer(retrieval_pointer)
+    def set_pointers_for_ith_pre_processor(self, i: int) -> None:
+        keys = ["pre_processed_projection_images", "reconstructed_object"]
+        for key in keys:
+            cache_pointer = self.cache_pointers[key].occupancy_pointer
+            cache_pointer[self.__number_of_pre_processors_index] = i
+            retrieval_pointer = self.retrieval_pointers[key].occupancy_pointer
+            retrieval_pointer[self.__number_of_pre_processors_index] = i
+            self.cache_pointers[key].set_occupancy_pointer(cache_pointer)
+            self.retrieval_pointers[key].set_occupancy_pointer(retrieval_pointer)
+    def set_pointers_for_ith_reconstructor(self, i: int) -> None:
+        keys = ["reconstructed_object"]
+        for key in keys:
+            cache_pointer = self.cache_pointers[key].occupancy_pointer
+            cache_pointer[self.__number_of_reconstructors_index] = i
+            retrieval_pointer = self.retrieval_pointers[key].occupancy_pointer
+            retrieval_pointer[self.__number_of_reconstructors_index] = i
+            self.cache_pointers[key].set_occupancy_pointer(cache_pointer)
+            self.retrieval_pointers[key].set_occupancy_pointer(retrieval_pointer)
+
+    def add_angle_resolver(self, new_number_of_angle_resolvers: int) -> None:
+        keys = ["angles", "projection_images", "pre_processed_projection_images", "reconstructed_object"]
+        for key in keys:
+            # read the current shape
+            with h5py.File(self.__big_data_dictionary_path, 'r') as f:
+                shape = f[key].shape
+            # expand the shape
+            shape = list(shape)
+            shape[self.__number_of_angle_resolvers_index] = new_number_of_angle_resolvers
+            shape = tuple(shape)
+            # expand memory
+            self.expand_memory(key, shape)
+        #self.set_pointers_for_ith_angle_resolver(self.__number_of_angle_resolvers)
+        self.__number_of_angle_resolvers = new_number_of_angle_resolvers
+    def add_pre_processor(self, new_number_of_pre_processors: int) -> None:
+        keys = ["pre_processed_projection_images", "reconstructed_object"]
+        for key in keys:
+            # read the current shape
+            with h5py.File(self.__big_data_dictionary_path, 'r') as f:
+                shape = f[key].shape
+            # expand the shape
+            shape = list(shape)
+            shape[self.__number_of_pre_processors_index] = new_number_of_pre_processors
+            shape = tuple(shape)
+            # expand memory
+            self.expand_memory(key, shape)
+        #self.set_pointers_for_ith_pre_processor(self.__number_of_pre_processors)
+        self.__number_of_pre_processors = new_number_of_pre_processors
+    def add_reconstructor(self, new_number_of_reconstructors: int) -> None:
+        keys = ["reconstructed_object"]
+        for key in keys:
+            # read the current shape
+            with h5py.File(self.__big_data_dictionary_path, 'r') as f:
+                shape = f[key].shape
+            # expand the shape
+            shape = list(shape)
+            shape[self.__number_of_reconstructors_index] = new_number_of_reconstructors
+            shape = tuple(shape)
+            # expand memory
+            self.expand_memory(key, shape)
+        #self.set_pointers_for_ith_pre_processor(self.__number_of_reconstructors)
+        self.__number_of_reconstructors = new_number_of_reconstructors
