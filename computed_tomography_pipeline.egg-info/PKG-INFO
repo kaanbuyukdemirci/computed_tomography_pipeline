@@ -25,8 +25,8 @@ License: Copyright (c) 2024 Kaan Buyukdemirci
         OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
         WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         
-Project-URL: Homepage, https://github.com/kaanbuyukdemirci/xray_pipeline
-Project-URL: Issues, https://github.com/kaanbuyukdemirci/xray_pipeline/issues
+Project-URL: Homepage, https://github.com/kaanbuyukdemirci/computed_tomography_pipeline
+Project-URL: Issues, https://github.com/kaanbuyukdemirci/computed_tomography_pipeline/issues
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent

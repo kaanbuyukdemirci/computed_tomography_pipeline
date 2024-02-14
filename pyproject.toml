@@ -24,8 +24,12 @@ dependencies = ["matplotlib","numpy","opencv-python","scikit-image","scipy","tqd
 "h5py", "scikit-image", "pydicom"]
 
 [tool.setuptools]
-package-dir = {""="computed_tomography_pipeline"}
+packages = ["computed_tomography_pipeline", "computed_tomography_pipeline.angle_resolver", 
+"computed_tomography_pipeline.ct_pipeline", "computed_tomography_pipeline.field_resolver", 
+"computed_tomography_pipeline.image_cache", "computed_tomography_pipeline.image_preprocessor", 
+"computed_tomography_pipeline.motor_controller", "computed_tomography_pipeline.object_reconstructor", 
+"computed_tomography_pipeline.simulator", "computed_tomography_pipeline.xray_controller"]
 
 [project.urls]
-Homepage = "https://github.com/kaanbuyukdemirci/xray_pipeline"
-Issues = "https://github.com/kaanbuyukdemirci/xray_pipeline/issues"
+Homepage = "https://github.com/kaanbuyukdemirci/computed_tomography_pipeline"
+Issues = "https://github.com/kaanbuyukdemirci/computed_tomography_pipeline/issues"
