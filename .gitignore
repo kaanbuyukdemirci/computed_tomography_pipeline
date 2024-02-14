@@ -5,8 +5,6 @@ TODO
 temp*
 big_data_dictionary*
 
-# any pycache in any directory
-**/__pycache__/
-
+__pycache__
 
 !.gitkeep

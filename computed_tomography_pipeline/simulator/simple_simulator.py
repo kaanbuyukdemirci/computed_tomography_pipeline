@@ -22,7 +22,7 @@ class SimpleDataset(object):
             for path_j in os.listdir(path_i):
                 path_j = path_i + "/" + path_j
                 if len(os.listdir(path_j)) != self.__cross_section_count:
-                    break
+                    continue
                 else:
                     path.append(path_j)
         self.__path = path
