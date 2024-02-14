@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "computed_tomography_pipeline"
 version = "2.0.0.dev1"
 authors = [
-  { name="Kaan Buyukdemirci", email="kaanbuyukdemirci2023@gmail.com" },
+  { name="Kaan Buyukdemirci", email="kaanbuyukdemirci2023@gmail.com"},
 ]
 maintainers = [
   {name = "Kaan Buyukdemirci", email = "kaanbuyukdemirci2023@gmail.com"}
@@ -24,7 +24,7 @@ dependencies = ["matplotlib","numpy","opencv-python","scikit-image","scipy","tqd
 "h5py", "scikit-image", "pydicom"]
 
 [tool.setuptools]
-packages = ["computed_tomography_pipeline"]
+package-dir = {""="computed_tomography_pipeline"}
 
 [project.urls]
 Homepage = "https://github.com/kaanbuyukdemirci/xray_pipeline"
