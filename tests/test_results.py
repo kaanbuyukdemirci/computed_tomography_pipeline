@@ -113,6 +113,6 @@ def draw():
         if pressed_key == ord('q'): break
 
 if __name__ == '__main__':
-    main(1)
+    #main(1)
     #main()
-    #draw()
+    draw()

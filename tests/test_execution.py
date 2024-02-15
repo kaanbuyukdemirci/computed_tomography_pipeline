@@ -11,6 +11,7 @@ from computed_tomography_pipeline import SimpleSimulator, SimulatorMotorControll
 from computed_tomography_pipeline import SimulatorXraySetting, SimulatorFieldResolver, SimulatorAngleResolver
 from computed_tomography_pipeline import SimulatorImageCache, SimulatorImagePreprocessor, SimulatorObjectReconstructor
 from computed_tomography_pipeline import SimpleDataset, SimulatorCtPipeline, SimulatorPipelineSettings
+from computed_tomography_pipeline import SimulatorReconstructionSettings
 
 def profiler(function):
     def wrapper(*args, **kwargs):
@@ -28,7 +29,7 @@ def main():
     path = "data/SPHNQA4IQI/"
     cross_section_count = 172
     power = 'on'
-    number_of_angles = 32
+    number_of_angles = 128
     big_data_dictionary_path = "big_data_dictionary.hdf5"
     from_saved = False
     skip_steps: list[Literal['original_object', 'field_images', 'angles', 
@@ -51,6 +52,7 @@ def main():
                                                 from_saved=from_saved)
     simulator_image_preprocessor = [SimulatorImagePreprocessor()]
     simulator_object_reconstructor = [SimulatorObjectReconstructor()]
+    simulator_reconstruction_settings = SimulatorReconstructionSettings(log=True, multiprocessing=False)
     simulator_ct_pipeline = SimulatorCtPipeline(simulator=simple_simulator, 
                                                     motor_controller=simulator_motor_controller, 
                                                     xray_controller=simulator_xray_controller, 
@@ -59,7 +61,8 @@ def main():
                                                     angle_resolver=simulator_angle_resolver, 
                                                     image_cache=simulator_image_cache, 
                                                     image_preprocessor=simulator_image_preprocessor, 
-                                                    object_reconstructor=simulator_object_reconstructor)
+                                                    object_reconstructor=simulator_object_reconstructor,
+                                                    reconstruction_settings=simulator_reconstruction_settings)
     simulator_pipeline_settings = SimulatorPipelineSettings(skip_steps=skip_steps)
     simulator_ct_pipeline.execute_pipeline_for_whole_dataset(pipeline_settings=simulator_pipeline_settings)
 
