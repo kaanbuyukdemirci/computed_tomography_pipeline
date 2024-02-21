@@ -21,22 +21,26 @@ class SimulatorReconstructionSettings(AbstractReconstructionSettings):
 def reconstruct_sinogram(sinogram, angle_history, pad_size):
     return iradon(sinogram, angle_history, circle=True, filter_name="ramp")[pad_size[0]:-pad_size[0], pad_size[1]:-pad_size[1]]
 class SimulatorObjectReconstructor(AbstractObjectReconstructor):
-    def __init__(self) -> None:
-        pass
+    def __init__(self, reduce: int=1) -> None:
+        self.reduce = reduce
     
-    def reconstruct_object(self, data: np.ndarray, angle_history: np.ndarray, 
+    def reconstruct_object(self, initial_sinograms: np.ndarray, angle_history: np.ndarray, 
                            reconstruction_settings:SimulatorReconstructionSettings) -> np.ndarray:
         # data : (n, z, y, x)
         # rotated around the z-axis
         # projected through y-axis
         # initial sinograms : (n, n_angles, z, x)
-        data = data.reshape(-1, *data.shape[-3:])
+        initial_sinograms = initial_sinograms.reshape(-1, *initial_sinograms.shape[-3:])
         
+        # reduce the number of projections
+        initial_sinograms = initial_sinograms[:, ::self.reduce]
+        angle_history = angle_history[::self.reduce]
+
         # prepare
-        sinograms = data.transpose(0, 2, 3, 1) # (n, z, x, n_angles) where z is the rotation axis
-        shape_difference = (np.array(data.shape[-1]) - np.array(reconstruction_settings.original_shape))[-2:]
+        sinograms = initial_sinograms.transpose(0, 2, 3, 1) # (n, z, x, n_angles) where z is the rotation axis
+        shape_difference = (np.array(initial_sinograms.shape[-1]) - np.array(reconstruction_settings.original_shape))[-2:]
         pad_size = [int(i) for i in shape_difference/2]
-        data = np.zeros(shape=(data.shape[0], *reconstruction_settings.original_shape))
+        data = np.zeros(shape=(initial_sinograms.shape[0], *reconstruction_settings.original_shape))
         
         
         # iterate over cross-sections
@@ -63,5 +67,4 @@ class SimulatorObjectReconstructor(AbstractObjectReconstructor):
         # final adjustments
         # data = np.flip(data, axis=1) # this might be necessary due to the implementation of iradon
         data = np.clip(data, 0, 1)
-        
-        return data 
+        return data  

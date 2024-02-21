@@ -29,7 +29,7 @@ def main():
     path = "data/SPHNQA4IQI/"
     cross_section_count = 172
     power = 'on'
-    number_of_angles = 128
+    number_of_angles = 32
     big_data_dictionary_path = "big_data_dictionary.hdf5"
     from_saved = False
     skip_steps: list[Literal['original_object', 'field_images', 'angles', 
@@ -44,10 +44,10 @@ def main():
     simulator_xray_setting = SimulatorXraySetting(power=power)
     simulator_field_resolver = SimulatorFieldResolver(xray_controller=simulator_xray_controller)
     simulator_angle_resolver = [SimulatorAngleResolver(number_of_angles=number_of_angles)]
-    simulator_image_cache = SimulatorImageCache(simulator_xray_controller, 
-                                                simulator_field_resolver,
-                                                simulator_angle_resolver, 
-                                                big_data_dictionary_path=big_data_dictionary_path,
+    simulator_image_cache = SimulatorImageCache(big_data_dictionary_path=big_data_dictionary_path,
+                                                xray_controller=simulator_xray_controller, 
+                                                field_resolver=simulator_field_resolver,
+                                                angle_resolver=simulator_angle_resolver, 
                                                 number_of_objects=number_of_objects,
                                                 from_saved=from_saved)
     simulator_image_preprocessor = [SimulatorImagePreprocessor()]
@@ -67,6 +67,7 @@ def main():
     simulator_ct_pipeline.execute_pipeline_for_whole_dataset(pipeline_settings=simulator_pipeline_settings)
 
 if __name__ == "__main__":
-    main()
-    #profiler(main)()
+    #main()
+    profiler(main)()
+    pass
    

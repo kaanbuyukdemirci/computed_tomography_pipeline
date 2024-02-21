@@ -32,12 +32,10 @@ def resize_ndarray(image, scale=1):
     image = image.numpy()
     return image
 
-def main(angle_resolver_index=0):
+def main(sample_index = 0, reconstructor_index=0):
     # load from big_data_dictionary.hdf5
-    sample_index = 0
-    angle_resolver_index = angle_resolver_index
     with h5py.File("big_data_dictionary.hdf5", 'r') as f:
-        object_reconstruction = f["reconstructed_object"][sample_index, angle_resolver_index, 0, 0]
+        object_reconstruction = f["reconstructed_object"][sample_index, 0, 0, reconstructor_index]
         original_object = f["original_object"][sample_index]
     print(object_reconstruction.max(), object_reconstruction.min())
     print(original_object.max(), original_object.min())
@@ -89,19 +87,17 @@ def main(angle_resolver_index=0):
 def draw():
     # load from big_data_dictionary.hdf5
     sample_index = 0
-    angle_resolver_index = 0
     with h5py.File("big_data_dictionary.hdf5", 'r') as f:
         dataset = f["projection_images"]
         print(dataset.shape)
         angle_resolver_0s = dataset[sample_index, 0]
-        angle_resolver_1s = dataset[sample_index, 1]
     for i in range(angle_resolver_0s.shape[0]):
         # images
         angle_resolver_0 = angle_resolver_0s[i]
-        angle_resolver_1 = angle_resolver_1s[i]
 
         # concatenate
-        image = np.concatenate((angle_resolver_0, angle_resolver_1), axis=1)
+        image = np.concatenate((angle_resolver_0, angle_resolver_0), axis=1)
+        image = (image - image.min()) / (image.max() - image.min())
         
         # put text
         text = str(i)
@@ -113,6 +109,6 @@ def draw():
         if pressed_key == ord('q'): break
 
 if __name__ == '__main__':
-    #main(1)
-    #main()
-    draw()
+    main(0,2)
+    #draw()
+    pass

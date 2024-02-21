@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: computed_tomography_pipeline
-Version: 1.1.0b1
+Version: 1.2.0
 Summary: A package for computed tomography image processing
 Author-email: Kaan Buyukdemirci <kaanbuyukdemirci2023@gmail.com>
 Maintainer-email: Kaan Buyukdemirci <kaanbuyukdemirci2023@gmail.com>
